@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Cost calculator | Calculate</title>
+<link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+{% endblock %}
+
+{% block body%}
+<div class="header">
+	<h1>Car Trip Calculator</h1>
+	<p>Calculate the cost of travelling by car</p>
+</div>
+
+<div class="topnav">
+	<a href="/">Calculate</a>
+	<a href="/table">Car database</a>
+	<a href="/about">About</a>
+</div>
+
+<div class="content">
+	{% block content %}
+	<form action ="/calculate" method="GET">
+		<div class="search">
+			<div class="tooltip">
+				<span class="tooltiptext">Enter place you are starting from (e.g. Gdańsk, Berlin)</span>
+				<input type="text" name="origin" id="origin" placeholder="Start point" required> 
+			</div>
+			<div class="tooltip">
+				<span class="tooltiptext">Enter the place you are driving to (e.g. Zakopane, Odessa)</span>
+			<input type="text" name="destination" id="destination" placeholder="End point" required>
+			</div>
+			<label for="there_and_back">Two ways?</label>
+			<div class="tooltip">
+				<span class="tooltiptext">If you want to take the return journey into account</span>
+			<input type="checkbox" name="there_and_back" id="there_and_back" value="there_and_back">
+			</div>
+			<label for="passengers">Number of passengers:</label>
+			<div class="tooltip">
+				<span class="tooltiptext">Leave 0 if you are travelling alone</span>
+			<input type="number" min="0" max="4" name="passengers" id="passengers" value=0>
+			</div>			
+		</div>
+	{% endblock %}
+		<table>
+			<tr>
+				<th>Choose</th>
+				<th>Make</th>
+				<th>Model</th>
+				<th>Year</th>
+				<th>Engine cap.</th>
+				<th>Fuel Type</th>
+				<th>Liters per 100km</th>
+			</tr>
+			{% for vehicle in records %}
+			<tr>
+				<td><input type="radio" id="chosen_car" name="chosen_car_id" value="{{vehicle.id}}" required></input></td>
+				<td>{{ vehicle.make }}</td>
+				<td>{{ vehicle.model }}</td>
+				<td>{{ vehicle.year }}</td>
+				<td>{{ vehicle.displ }} </td>
+				<td>{{ vehicle.fuelType1 }}</td>
+				<td>{{ vehicle.comb08l100  }}</td>
+			</tr>
+			{% endfor %}
+		</table>	
+		<div class="search">
+			<input type="submit" value="Calculate">
+		</div>
+	</form>
+</div>
+
+<div class="footer">
+	<h5>© Copyright 2021 Michał Danielewicz</h5>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Car Fuel</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"
+{% endblock %}
+
+{% block body%}
+<h1>Update car</h1>
+<div>
+	<form action ="/update/{{car.id}}" method="POST">
+		<input type="text" name="car_name" id="carname" value="{{car.name}}">
+		<input type="text" name="fuel_consumption" id="fuel_consumption" value="{{car.avg_fuel_consumption}}">
+		<input type="submit" value="Update Car">
+	</form>
+</div>
+
+{% endblock %}

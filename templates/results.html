@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Cost calculator | Results</title>
+<link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+{% endblock %}
+
+{% block body%}
+<div class="header">
+	<h1>Car Trip Calculator</h1>
+	<p>Calculate the cost of travelling by car</p>
+</div>
+
+<div class="topnav">
+	<a href="/">Calculate</a>
+	<a href="/table">Car database</a>
+	<a href="/about">About</a>
+</div>
+
+<div class="content">
+	{% block content %}
+    <div class="results">
+        <b>Travelling from:</b> {{ origin_descr }} 
+        <br>
+        <b>To:</b> {{ destination_descr }}
+        <br>
+        <b>Total Mileage:</b> {{ mileage }} km
+        <br>
+        <b>Car:</b> {{ chosen_car_make }} {{ chosen_car_model }} {{ car_displ }}
+        <br>
+        <b>Fuel type:</b> {{ fuel_type }}
+        <br>
+        <b>Average consumption:</b> {{ avg_consumption }} l/100km
+        <br>
+        <b>Price per liter:</b> {{ fuel_price }} EUR / {{ price_in_pln }} PLN
+        <br>
+        <br>
+        <b>Total cost of trip:</b> {{ total_cost }} PLN 
+        <br>
+        <b>Per person:</b> {{ cost_per_user }} PLN
+    </div>
+    {% endblock %}
+</div>
+
+<div class="footer">
+	<h5>© Copyright 2021 Michał Danielewicz</h5>
+</div>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Cost calculator | Table</title>
+<link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+{% endblock %}
+
+{% block body%}
+<div class="header">
+	<h1>Vehicle Dataset</h1>
+	<p>Search for your car and add it to favourites</p>
+</div>
+
+<div class="topnav">
+	<a href="/">Calculate</a>
+	<a href="/table">Car database</a>
+	<a href="/about">About</a>
+</div>
+
+<div class="content">
+	{% block content %}
+	<form action="/search" method="GET">
+		<input type=text name=search_make id=search_make placeholder="Search by make">
+		<input type=text name=search_model id=search_model placeholder="Search by model">
+		<input type=submit value="Search">
+	</br>
+		There are {{ count }} results
+	</form>
+	{% endblock %}
+
+	<table style="width:75%" >
+		<tr>
+			<th>Id</th>
+			<th>Make</th>
+			<th>Model</th>
+			<th>Year</th>
+			<th>Engine cap.</th>
+			<th>Fuel Type</th>
+			<th>MPG City</th>
+			<th>MPG Combined</th>
+			<th>Liters per 100km</th>
+			<th>Favourite?</th>
+			<th>Actions</th>
+		</tr>
+		{% for vehicle in records %}
+			<tr>
+				<td>{{ vehicle.id }}</td>
+				<td>{{ vehicle.make }}</td>
+				<td>{{ vehicle.model }}</td>
+				<td>{{ vehicle.year }}</td>
+				<td>{{ vehicle.displ }} </td>
+				<td>{{ vehicle.fuelType1 }}</td>
+				<td>{{ vehicle.city08 }}</td>
+				<td>{{ vehicle.comb08 }}</td>
+				<td>{{ vehicle.comb08l100  }}</td>
+				<td>{{ vehicle.favourite }}</td>
+				<td>
+					<a href="/add_to_favourite/{{ vehicle.id }}">Add to favourite</a>
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+	
+	<div class="pagination">
+		<a href="{{ first_page }}">1</a>
+		<a href="{{ prev_page }}">&laquo;</a>
+		<a href="{{ next_page }}">&raquo;</a>
+		<a href="{{ last_page }}">{{ last_page_str }}</a>
+	</div>
+
+	<form action ="/add_new_car" method="POST">
+		<input type="text" name="car_make" id="car_name" placeholder="make" required>
+		<input type="text" name="car_model" id="car_model" placeholder="model" required>
+		<input type="text" name="car_displ" id="car_displ" placeholder="Eng. cap." required>
+		<input type="text" name="car_year" id="car_year" placeholder="year" required>
+		<select name="car_fuelType" id="car_fuelType">
+			<option value="lpg">LPG</option>
+			<option value="diesel">Diesel</option>
+			<option value="gasoline">Gasoline</option>
+		</select>
+		<input type="text" name="car_comb08l100" id="car_comb08l100" placeholder="avg. fuel consumption" required>
+		<input type="submit" value="Add New Car">
+	</form>
+</div>
+
+<div class="footer">
+	<h5>© Copyright 2021 Michał Danielewicz</h5>
+</div>
+
+{% endblock %}

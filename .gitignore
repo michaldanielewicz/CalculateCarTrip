@@ -1,0 +1,5 @@
+.env
+.gitgnore
+__pycache__/
+pyvenv.cfg
+.vscode/
