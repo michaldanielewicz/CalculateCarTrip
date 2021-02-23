@@ -36,6 +36,7 @@ conn = http.client.HTTPSConnection('api.collectapi.com')
 class Cars(db.Model):
     """ Database class. """
     __tablename__ = 'vehicles_dataset'
+    
     city08 = db.Column(db.Float)
     co2TailpipeGpm = db.Column(db.Float)
     comb08 = db.Column(db.Float)
