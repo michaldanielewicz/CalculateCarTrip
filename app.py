@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_heroku import Heroku
 
 import psycopg2
 import requests
@@ -27,17 +28,21 @@ HEROKU_HOST = os.getenv('HEROKU_HOST')
 HEROKU_PORT = os.getenv('HEROKU_PORT')
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = HEROKU_DATABASE_URI  # HEROKU_DATABASE_URI #cfg.DATABASE_URI
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://sagbpbwehkdzxl:b108b342ab9949b92272e87bf29e0f469fdfaa7c380f7c2f818ef80ffcf7ec9b@ec2-3-221-49-44.compute-1.amazonaws.com:5432/d1ham8sea5lkj1'  # HEROKU_DATABASE_URI #cfg.DATABASE_URI
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+heroku = Heroku(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-connection = psycopg2.connect(
-    database = HEROKU_DATABASE,    #cfg.DATABASE
-    user = HEROKU_USER,   #cfg.DATABASE_USERNAME
-    password = HEROKU_PASSWORD,   #cfg.DATABASE_PASSWORD
-    host = HEROKU_HOST,       #cfg.DATABASE_HOST
-    port = HEROKU_PORT)       #cfg.DATABASE_PORT
-cursor = connection.cursor()
+
+#connection = psycopg2.connect(
+ #   database = HEROKU_DATABASE,    #cfg.DATABASE
+  #  user = HEROKU_USER,   #cfg.DATABASE_USERNAME
+   # password = HEROKU_PASSWORD,   #cfg.DATABASE_PASSWORD
+   # host = HEROKU_HOST,       #cfg.DATABASE_HOST
+   # port = HEROKU_PORT)       #cfg.DATABASE_PORT
+#cursor = connection.cursor()
+
 conn = http.client.HTTPSConnection('api.collectapi.com')
 
 class Cars(db.Model):
