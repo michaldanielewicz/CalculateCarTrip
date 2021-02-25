@@ -19,9 +19,11 @@ import config as cfg
 load_dotenv()
 COLLECT_APIKEY = os.getenv('COLLECT_APIKEY')
 HERE_APIKEY = os.getenv('HERE_APIKEY')
+HEROKU_DATABASE_URI = os.getenv('HEROKU_DATABASE_URI')
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = cfg.DATABASE_URI
+app.config['SQLALCHEMY_DATABASE_URI'] = HEROKU_DATABASE_URI #cfg.DATABASE_URI
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 connection = psycopg2.connect(
@@ -36,7 +38,6 @@ conn = http.client.HTTPSConnection('api.collectapi.com')
 class Cars(db.Model):
     """ Database class. """
     __tablename__ = 'vehicles_dataset'
-    
     city08 = db.Column(db.Float)
     co2TailpipeGpm = db.Column(db.Float)
     comb08 = db.Column(db.Float)
