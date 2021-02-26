@@ -3,12 +3,16 @@
 With this app you can easily look up estimated cost of travel by car. 
 
 ## Why?
-I wanted to create this app to improve my skills in Flask, managing databases, working with HTML and CSS. 
+I travel a lot with my friends around my country. I was sick of always checking prices of fuel, distance etc. so I decided to write this app.
+I also wanted to create this app to improve my skills in Flask, managing databases, working with HTML and CSS. 
 
 ## Technologies
 * Python - version 3.9.1
 * Flask - version 1.1.2
 * Flask-SQLAlchemy - version 2.4.4 
+
+## Live
+You can check the live version [HERE](https://calculatecartrip.herokuapp.com/) (Heroku).
 
 ## Features
 List of features ready and TODOs for a future development.
