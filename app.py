@@ -18,8 +18,8 @@ import requests
 import config as cfg
 
 load_dotenv()
-COLLECT_APIKEY = os.environ('COLLECT_APIKEY')    #os.getenv('COLLECT_APIKEY')
-HERE_APIKEY = os.environ('HERE_APIKEY') #os.getenv('HERE_APIKEY')
+COLLECT_APIKEY = os.environ['COLLECT_APIKEY']    #os.getenv('COLLECT_APIKEY')
+HERE_APIKEY = os.environ['HERE_APIKEY'] #os.getenv('HERE_APIKEY')
 HEROKU_DATABASE_URI = os.environ['DATABASE_URL']
 
 #HEROKU_DATABASE_URI = os.getenv('HEROKU_DATABASE_URI')
