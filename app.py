@@ -30,9 +30,9 @@ HEROKU_DATABASE_URI = os.environ['DATABASE_URL']
 #HEROKU_PORT = os.getenv('HEROKU_PORT')
 
 app = Flask(__name__)
-app.config.from_object('config.ProdConfig')
-#app.config['SQLALCHEMY_DATABASE_URI'] = HEROKU_DATABASE_URI
-#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+#app.config.from_object('config.ProdConfig')
+app.config['SQLALCHEMY_DATABASE_URI'] = HEROKU_DATABASE_URI
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 heroku = Heroku(app)
 db = SQLAlchemy(app)
