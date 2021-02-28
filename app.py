@@ -6,8 +6,8 @@ Using database and free APIs to get neccessary data.
 import json
 import http.client
 import os
-
 from dotenv import load_dotenv
+
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -15,14 +15,14 @@ from flask_heroku import Heroku
 
 import psycopg2
 import requests
-import config as cfg
+import config 
 
 load_dotenv()
+
 COLLECT_APIKEY = os.environ['COLLECT_APIKEY']
 HERE_APIKEY = os.environ['HERE_APIKEY']
 HEROKU_DATABASE_URI = os.environ['DATABASE_URL']
 
-#HEROKU_DATABASE_URI = os.getenv('HEROKU_DATABASE_URI')
 #HEROKU_DATABASE = os.getenv('HEROKU_DATABASE')
 #HEROKU_USER = os.getenv('HEROKU_USER')
 #HEROKU_PASSWORD = os.getenv('HEROKU_PASSWORD')
@@ -30,8 +30,9 @@ HEROKU_DATABASE_URI = os.environ['DATABASE_URL']
 #HEROKU_PORT = os.getenv('HEROKU_PORT')
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = HEROKU_DATABASE_URI
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config.from_object('config.ProdConfig')
+#app.config['SQLALCHEMY_DATABASE_URI'] = HEROKU_DATABASE_URI
+#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 heroku = Heroku(app)
 db = SQLAlchemy(app)

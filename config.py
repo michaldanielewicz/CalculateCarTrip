@@ -2,26 +2,25 @@
 Config for app.py
 '''
 
-DATABASE = 'cars'
-DATABASE_USERNAME = 'postgres'
-DATABASE_PASSWORD = 'password'
+import os
+from dotenv import load_dotenv
 
-DATABASE_URI = 'postgresql://postgres:password@127.0.0.1:5432/cars'
-DATABASE_HOST = '127.0.0.1'
-DATABASE_PORT = '5432'
-
+load_dotenv()
 
 class Config():
     """Base config."""
-    pass
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-class ProdConfig():
+class ProdConfig(Config):
     """Production config."""
+    FLASK_ENV = 'production'
     DEBUG = False
     TESTING = False
+    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 
-class DevConfig():
+class DevConfig(Config):
     """Development config."""
+    FLASK_ENV = 'development'
     DEBUG = True
     TESTING = True
-    DATABASE_URI 
+    SQLALCHEMY_DATABASE_URI = os.environ['LOCAL_DATABASE_URI']
