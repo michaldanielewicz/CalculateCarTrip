@@ -21,7 +21,7 @@ load_dotenv()
 
 COLLECT_APIKEY = os.environ['COLLECT_APIKEY']
 HERE_APIKEY = os.environ['HERE_APIKEY']
-HEROKU_DATABASE_URI = os.environ['DATABASE_URL']
+#HEROKU_DATABASE_URI = os.environ['DATABASE_URL']
 
 #HEROKU_DATABASE = os.getenv('HEROKU_DATABASE')
 #HEROKU_USER = os.getenv('HEROKU_USER')
@@ -30,9 +30,9 @@ HEROKU_DATABASE_URI = os.environ['DATABASE_URL']
 #HEROKU_PORT = os.getenv('HEROKU_PORT')
 
 app = Flask(__name__)
-#app.config.from_object('config.ProdConfig')
-app.config['SQLALCHEMY_DATABASE_URI'] = HEROKU_DATABASE_URI
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config.from_object('config.ProdConfig')
+#app.config['SQLALCHEMY_DATABASE_URI'] = HEROKU_DATABASE_URI
+#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 heroku = Heroku(app)
 db = SQLAlchemy(app)
@@ -46,7 +46,7 @@ migrate = Migrate(app, db)
    # port = HEROKU_PORT)       #cfg.DATABASE_PORT
 #cursor = connection.cursor()
 
-connection = psycopg2.connect(HEROKU_DATABASE_URI, sslmode='require')
+#connection = psycopg2.connect(HEROKU_DATABASE_URI, sslmode='require')
 
 conn = http.client.HTTPSConnection('api.collectapi.com')
 
