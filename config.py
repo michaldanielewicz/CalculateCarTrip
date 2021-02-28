@@ -16,7 +16,7 @@ class ProdConfig(Config):
     FLASK_ENV = 'production'
     DEBUG = False
     TESTING = False
-    SQLALCHEMY_DATABASE_URI = os.environ['HEROKU_DATABASE_URI']
+    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 
 class DevConfig(Config):
     """Development config."""
