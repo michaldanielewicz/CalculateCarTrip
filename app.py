@@ -102,11 +102,9 @@ def convert_price_pln(price_in_euro):
 def get_place(place):
     """ Gets place details: coords, city, country etc. HERE API. """
     params = {'apikey': HERE_APIKEY, 'q': place}
+    url = 'https://discover.search.hereapi.com/v1/geocode'
     try:
-        r = requests.get(
-            url='https://discover.search.hereapi.com/v1/geocode',
-            params=params
-            )
+        r = requests.get(url=url, params=params)
         data = r.json()
     except:
         return 'Could not get place details'
@@ -132,19 +130,19 @@ def get_trip(search_origin, search_destination):
         'transportMode': 'car',
         'return': 'summary'
         }
+    url = 'https://router.hereapi.com/v8/routes'
     try:
-        r = requests.get(
-            url='https://router.hereapi.com/v8/routes',
-            params=params
-            )
+        r = requests.get(url=url, params=params)
         data = r.json()
     except:
         return 'Could not get route'
     length = data['routes'][0]['sections'][0]['summary']['length']
+    duration = data['routes'][0]['sections'][0]['summary']['baseDuration']
     trip = {
         'origin': origin['items'][0]['title'],
         'destination': destination['items'][0]['title'],
-        'mileage': round(length/1000)
+        'mileage': round(length/1000),
+        'duration': round(duration/3600, 2)
         }
     return trip
 
@@ -171,6 +169,7 @@ def calculate():
         mileage = trip['mileage']
         origin_descr = trip['origin']
         destination_descr = trip['destination']
+        duration = trip['duration']
 
         if 'there_and_back' in request.form:
             mileage = mileage * 2
@@ -194,6 +193,7 @@ def calculate():
             total_cost=total_cost,
             cost_per_user=cost_per_user,
             mileage=mileage,
+            duration=duration
             )
     else:
         return render_template('results.html')
