@@ -15,40 +15,29 @@ from flask_heroku import Heroku
 
 import psycopg2
 import requests
-import config 
 
 load_dotenv()
-
 COLLECT_APIKEY = os.environ['COLLECT_APIKEY']
 HERE_APIKEY = os.environ['HERE_APIKEY']
-#HEROKU_DATABASE_URI = os.environ['DATABASE_URL']
-
-#HEROKU_DATABASE = os.getenv('HEROKU_DATABASE')
-#HEROKU_USER = os.getenv('HEROKU_USER')
-#HEROKU_PASSWORD = os.getenv('HEROKU_PASSWORD')
-#HEROKU_HOST = os.getenv('HEROKU_HOST')
-#HEROKU_PORT = os.getenv('HEROKU_PORT')
 
 app = Flask(__name__)
 app.config.from_object('config.ProdConfig')
-#app.config['SQLALCHEMY_DATABASE_URI'] = HEROKU_DATABASE_URI
-#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 heroku = Heroku(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-#connection = psycopg2.connect(
- #   database = HEROKU_DATABASE,    #cfg.DATABASE
-  #  user = HEROKU_USER,   #cfg.DATABASE_USERNAME
-   # password = HEROKU_PASSWORD,   #cfg.DATABASE_PASSWORD
-   # host = HEROKU_HOST,       #cfg.DATABASE_HOST
-   # port = HEROKU_PORT)       #cfg.DATABASE_PORT
-#cursor = connection.cursor()
-
-#connection = psycopg2.connect(HEROKU_DATABASE_URI, sslmode='require')
+# connection = psycopg2.connect(
+#     database=HEROKU_DATABASE,    #cfg.DATABASE
+#     user=HEROKU_USER,   #cfg.DATABASE_USERNAME
+#     password=HEROKU_PASSWORD,   #cfg.DATABASE_PASSWORD
+#     host=HEROKU_HOST,       #cfg.DATABASE_HOST
+#     port=HEROKU_PORT)       #cfg.DATABASE_PORT
+# cursor = connection.cursor()
+# connection = psycopg2.connect(HEROKU_DATABASE_URI, sslmode='require')
 
 conn = http.client.HTTPSConnection('api.collectapi.com')
+
 
 class Cars(db.Model):
     """ Database class. """
@@ -73,21 +62,30 @@ class Cars(db.Model):
     youSaveSpend = db.Column(db.Float)
     favourite = db.Column(db.Boolean, default=False)
     comb08l100 = db.Column(db.Float)
+
     def __repr__(self):
         return '<Car %r>' % self.id
 
+
 def get_fuel_price(fuel_type):
-    """ Gets fuel price from GasPrice API in EUR for given fuel_type (lpg, diesel, gasoline). """
+    """
+    Gets fuel price in EUR for given fuel_type (lpg, diesel, gasoline).
+    GasPrice API.
+    """
     # TODO: add price based on location of starting point
     try:
-        headers = {'content-type': "application/json", 'authorization': COLLECT_APIKEY}
+        headers = {
+            'content-type': "application/json",
+            'authorization': COLLECT_APIKEY
+            }
         conn.request("GET", "/gasPrice/europeanCountries", headers=headers)
         result = conn.getresponse()
         response = json.load(result)
     except:
         return 'Could not get the price of the fuel'
-    rate = float(response["results"][32][fuel_type].replace(',','.'))
-    return round(rate,2)
+    rate = float(response["results"][32][fuel_type].replace(',', '.'))
+    return round(rate, 2)
+
 
 def convert_price_pln(price_in_euro):
     """ Converts given price in EUR to PLN. ExchangeRates API. """
@@ -98,25 +96,31 @@ def convert_price_pln(price_in_euro):
         return 'Could not convert to PLN'
     rate = data['rates']['PLN']
     price = rate * price_in_euro
-    return round(price,2)
+    return round(price, 2)
+
 
 def get_place(place):
     """ Gets place details: coords, city, country etc. HERE API. """
-    params = {'apikey':HERE_APIKEY, 'q':place}
+    params = {'apikey': HERE_APIKEY, 'q': place}
     try:
-        r = requests.get(url='https://discover.search.hereapi.com/v1/geocode', params=params)
+        r = requests.get(
+            url='https://discover.search.hereapi.com/v1/geocode',
+            params=params
+            )
         data = r.json()
     except:
         return 'Could not get place details'
     return data
+
 
 def get_place_coord(place):
     """ Gets place coordinates from JSON format to string. """
     coord = place['items'][0]['position']
     return f'{coord["lat"]}, {coord["lng"]}'
 
+
 def get_trip(search_origin, search_destination):
-    """ Returns details about starting point, ending point and mileage. HERE API. """
+    """ Details about starting point, ending point and mileage. HERE API. """
     origin = get_place(search_origin)
     destination = get_place(search_destination)
     origin_coord = get_place_coord(origin)
@@ -129,7 +133,10 @@ def get_trip(search_origin, search_destination):
         'return': 'summary'
         }
     try:
-        r = requests.get(url='https://router.hereapi.com/v8/routes', params=params)
+        r = requests.get(
+            url='https://router.hereapi.com/v8/routes',
+            params=params
+            )
         data = r.json()
     except:
         return 'Could not get route'
@@ -141,11 +148,13 @@ def get_trip(search_origin, search_destination):
         }
     return trip
 
+
 @app.route('/')
 def index():
     """ Main site with calculation form. Shows favourite cars. """
-    records = Cars.query.filter(Cars.favourite==True)
+    records = Cars.query.filter(Cars.favourite == True)
     return render_template("index.html", records=records)
+
 
 @app.route('/calculate', methods=['POST', 'GET'])
 def calculate():
@@ -168,26 +177,27 @@ def calculate():
 
         fuel_price = get_fuel_price(car.fuelType1)
         price_in_pln = convert_price_pln(fuel_price)
-        total_cost = round((car.comb08l100 * mileage * price_in_pln)/100,2)
+        total_cost = round((car.comb08l100 * mileage * price_in_pln)/100, 2)
         cost_per_user = total_cost/(passengers+1)
 
         return render_template(
             'results.html',
-            origin_descr = origin_descr,
-            destination_descr = destination_descr,
-            chosen_car_make = car.make,
-            chosen_car_model = car.model,
-            car_displ = car.displ,
-            avg_consumption = car.comb08l100,
-            fuel_type = car.fuelType1,
-            fuel_price = fuel_price,
-            price_in_pln = price_in_pln,
-            total_cost = total_cost,
-            cost_per_user = cost_per_user,
-            mileage = mileage,
+            origin_descr=origin_descr,
+            destination_descr=destination_descr,
+            chosen_car_make=car.make,
+            chosen_car_model=car.model,
+            car_displ=car.displ,
+            avg_consumption=car.comb08l100,
+            fuel_type=car.fuelType1,
+            fuel_price=fuel_price,
+            price_in_pln=price_in_pln,
+            total_cost=total_cost,
+            cost_per_user=cost_per_user,
+            mileage=mileage,
             )
     else:
         return render_template('results.html')
+
 
 @app.route('/table', methods=['POST', 'GET'])
 def table():
@@ -210,6 +220,7 @@ def table():
         first_page=first_page
         )
 
+
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     """ Search database for given car. """
@@ -228,6 +239,7 @@ def search():
         records.order_by(Cars.id)
         count = records.count()
         return render_template('table.html', records=records, count=count)
+
 
 @app.route('/add_new_car', methods=['POST', 'GET'])
 def add_new_car():
@@ -256,6 +268,7 @@ def add_new_car():
         except:
             return 'Error: Could not add a new car'
 
+
 @app.route('/delete/<int:id>')
 def delete(id):
     """ Deletes car from database. """
@@ -266,6 +279,7 @@ def delete(id):
         return redirect('/table')
     except:
         return 'There was a problem deleting that car'
+
 
 @app.route('/add_to_favourite/<int:id>')
 def add_to_favourite(id):
@@ -278,6 +292,7 @@ def add_to_favourite(id):
     except:
         return 'There was an issue adding your car to favourite'
 
+
 @app.route('/remove_from_favourite/<int:id>')
 def remove_from_favourite(id):
     """ Removes car from favourite. """
@@ -289,10 +304,12 @@ def remove_from_favourite(id):
     except:
         return 'There was an issue removing your car from favourite'
 
+
 @app.route('/about')
 def about():
     """ About page. """
     return render_template('about.html')
+
 
 if __name__ == "__main__":
     app.run(debug=True)
