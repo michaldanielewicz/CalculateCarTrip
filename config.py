@@ -23,4 +23,4 @@ class DevConfig(Config):
     FLASK_ENV = 'development'
     DEBUG = True
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ['LOCAL_DATABASE_URI']
+    #SQLALCHEMY_DATABASE_URI = os.environ['LOCAL_DATABASE_URI']
